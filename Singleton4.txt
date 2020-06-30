@@ -1,0 +1,39 @@
+#include <iostream>
+using namespace std;
+// 使用嵌套类进行销毁
+class Singleton {
+    public:
+        static Singleton * GetInstance() {
+            return m_Instance;
+        }
+
+        int GetTest() {
+            return m_Test;
+        }
+    private:
+        Singleton() { m_Test = 0; }
+        static Singleton * m_Instance;
+        int m_Test;
+
+        class GC { // 嵌套类
+            public:
+                ~GC() {
+                    if(m_Instance != nullptr) {
+                        delete m_Instance;
+                        m_Instance = nullptr;
+                    }
+                }
+        }
+        static GC gc;
+};
+
+Singleton * Singleton::m_Instance = new Singleton();
+Singleton::GC Singleton::gc;
+
+int main(int argc, char * argv[])
+{
+    Singleton * singletonObj = Singleton::GetInstance();
+    cout<<singletonObj->GetTest()<<endl;
+
+    return 0;
+}
